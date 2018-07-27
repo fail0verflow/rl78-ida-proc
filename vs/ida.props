@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <IDA_SDK_DIR>c:\src\ida\idasdk71\</IDA_SDK_DIR>
+    <IDA_DIR>c:\Program Files\IDA 7.1\</IDA_DIR>
+    <IDA_PROCS_DIR>$(IDA_DIR)procs\</IDA_PROCS_DIR>
+    <ida64>false</ida64>
+    <ida64 Condition="$(Configuration.EndsWith('64'))">true</ida64>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludePath>$(IDA_SDK_DIR)include;$(IDA_SDK_DIR)module;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ida64)'=='false'">
+    <LibraryPath>$(IDA_SDK_DIR)lib\x64_win_vc_32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ida64)'=='true'">
+    <LibraryPath>$(IDA_SDK_DIR)lib\x64_win_vc_64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>ida.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>__NT__;__IDP__;__X64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>pch.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Condition="'$(ida64)'=='true'">
+      <PreprocessorDefinitions>__EA64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetPath) "$(IDA_PROCS_DIR)" /d /y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="IDA_SDK_DIR">
+      <Value>$(IDA_SDK_DIR)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
